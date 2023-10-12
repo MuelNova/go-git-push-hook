@@ -1,0 +1,8 @@
+[Unit]
+Description=Go-GitHub-Webhooks
+After=network.target
+
+[Service]
+ExecStart=<YOUR_FILENAME>
+Restart=always
+WorkingDirectory=<YOUR_LOCATION>
