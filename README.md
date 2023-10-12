@@ -51,6 +51,27 @@ cp .env.example .env
 
 | Item          | Description                                       | Default Value | Type     |
 | ------------- | ------------------------------------------------- | ------------- | -------- |
-| GITHUB_SECRET | Webhook secret, see [below](#below)               | -             | Must     |
+| GITHUB_SECRET | Webhook secret, see [below](#Usage)               | -             | Required |
 | PORT          | Listening port                                    | 4567          | Optional |
 | EXTRA_COMMAND | Command to be executed when receiving PUSH event. | -             | Optional |
+
+
+
+## Usage
+
+First, go the the repo you want to listen, click `settings`
+
+![settings](docs/README_settings.png)
+
+Find `Webhooks`, then click `Add webhook`
+
+![webhook](docs/README_webhooks.png)
+
+![webhook_settings](docs/README_webhook_settings)
+
+The `Payload URL` should be your ip or your domain name and your port, we recommend you to use HTTPS instead of HTTP.
+
+The `Secret` you set should be filled into `GITHUB_SECRET` as well.
+
+> For safety consideration, the `Secret` is a must in the configuration.
+
