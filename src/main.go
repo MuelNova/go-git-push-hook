@@ -4,7 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -20,6 +20,10 @@ func generateHMACSignature(secret string, payload []byte) string {
 }
 
 func runCommand(command string) error {
+	workDir := os.Getenv("WORK_DIR")
+	if workDir != "" {
+		os.Chdir(workDir)
+	}
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -28,9 +32,15 @@ func runCommand(command string) error {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Failed to load .env file")
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Failed to load .env file: ", err)
+		}
+	} else if os.IsNotExist(err) {
+		log.Println(".env file not found, continuing without loading it")
+	} else {
+		log.Fatal("Error checking for .env file: ", err)
 	}
 
 	secret := os.Getenv("GITHUB_SECRET")
@@ -41,7 +51,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.POST("/", func(c *gin.Context) {
-		payload, err := ioutil.ReadAll(c.Request.Body)
+		payload, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Fatalf("Error reading body: %v", err)
 			c.AbortWithStatus(400)
@@ -56,6 +66,9 @@ func main() {
 
 		go func() {
 			extraCommand := os.Getenv("EXTRA_COMMAND")
+			if extraCommand == "" {
+				return
+			}
 			err := runCommand(extraCommand) // TODO: push this notice.
 			if err != nil {
 				log.Fatalf("Error running command: %v", err)
@@ -71,4 +84,5 @@ func main() {
 		PORT = "4567"
 	}
 	r.Run(":" + PORT)
+	log.Printf("Listening on port %s", PORT)
 }
