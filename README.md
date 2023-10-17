@@ -54,6 +54,7 @@ cp .env.example .env
 | GITHUB_SECRET | Webhook secret, see [below](#Usage)               | -             | Required |
 | PORT          | Listening port                                    | 4567          | Optional |
 | EXTRA_COMMAND | Command to be executed when receiving PUSH event. | -             | Optional |
+| WORK_DIR      | EXTRA_COMMAND Work Directory                      | Current Dir   | Optional |
 
 
 
