@@ -66,10 +66,7 @@ func main() {
 
 		go func() {
 			extraCommand := os.Getenv("EXTRA_COMMAND")
-			if extraCommand == "" {
-				return
-			}
-			err := runCommand(extraCommand) // TODO: push this notice.
+			err := runCommand("git pull\n" + extraCommand) // TODO: push this notice.
 			if err != nil {
 				log.Fatalf("Error running command: %v", err)
 				return
